@@ -1,28 +1,14 @@
 # Carlito Connect — Delta Reign Binder
 
-A GitHub Pages-ready Pokémon card binder based on the supplied Delta Reign HTML.
-
 ## Files
-- `index.html` — page structure
+- `index.html` — binder page and front cover
 - `style.css` — styling
-- `cards.js` — the 58 supplied card entries and image URLs
 - `app.js` — binder, card editor, pull history, stream library and browser storage
+- `cards.js` — 58 card entries and artwork links
+- `delta-reign-cover.png` — updated black cover with thin red border and separated artwork blocks
 
-## Publish with GitHub Pages
-1. Upload all four files (plus this README) into the root of your repository.
-2. In GitHub, open **Settings → Pages**.
-3. Choose **Deploy from a branch**, select `main` and `/ (root)`, then Save.
-4. Open the Pages URL after deployment completes.
+## Publish
+Upload all files into the root of the `Pokemon-Binder` repository, replacing matching files. Keep `delta-reign-cover.png` alongside `index.html`. Commit the changes and allow GitHub Pages to redeploy.
 
 ## Storage
-The binder uses browser `localStorage` for owned cards, card edits, pull history, saved stream records, Delta Reign pack preset and default stream settings. Data is local to the browser/device. Use the browser's export/backup facilities before clearing site data or changing devices. GitHub Pages is static hosting and does not provide cross-device account sync.
-
-## Artwork
-The original card image URLs from the supplied HTML are retained and load over the internet.
-
-## Pull logging
-When logging a card pull, enter the buyer's eBay username and order number, the person who packed it, the stream and the pull date/time. The card's pull history displays those details, newest first.
-
-
-## Front cover artwork
-The front cover uses `delta-reign-cover.png`, supplied by the site owner. Keep this image in the repository root alongside `index.html`.
+Card ownership, card edits, pull history, streams, saved Delta Reign pack settings and stream defaults are stored in this browser. GitHub Pages is static hosting, so data does not sync between devices.
