@@ -24,9 +24,5 @@ The original card image URLs from the supplied HTML are retained and load over t
 When logging a card pull, enter the buyer's eBay username and order number, the person who packed it, the stream and the pull date/time. The card's pull history displays those details, newest first.
 
 
-## Important storage fix
-Card details and pull histories are now saved separately in `delta-reign-card-data-v1`, as well as the owned-card and stream records. This prevents pull histories from disappearing when the page reloads. Browser storage is still device/browser-specific.
-
-
-## Stream pull log reliability
-Logged pulls are now stored in a dedicated stream pull-log key as well as the card history. The stream library reads its pull count and entries from this independent log, so it does not rely on the live card objects being present after a refresh. On first load, existing saved card pull histories are migrated into the stream log.
+## Front cover artwork
+The front cover uses `delta-reign-cover.png`, supplied by the site owner. Keep this image in the repository root alongside `index.html`.
