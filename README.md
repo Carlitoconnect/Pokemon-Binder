@@ -26,3 +26,7 @@ When logging a card pull, enter the buyer's eBay username and order number, the 
 
 ## Important storage fix
 Card details and pull histories are now saved separately in `delta-reign-card-data-v1`, as well as the owned-card and stream records. This prevents pull histories from disappearing when the page reloads. Browser storage is still device/browser-specific.
+
+
+## Stream pull log reliability
+Logged pulls are now stored in a dedicated stream pull-log key as well as the card history. The stream library reads its pull count and entries from this independent log, so it does not rely on the live card objects being present after a refresh. On first load, existing saved card pull histories are migrated into the stream log.

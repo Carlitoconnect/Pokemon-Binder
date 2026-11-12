@@ -3,18 +3,31 @@
 const TOTAL=58, KEY='delta-reign-manual-v3', STREAM_KEY='delta-reign-streams-v1';
 const cards = window.CARDS;
 const CARD_DATA_KEY='delta-reign-card-data-v1';
+const PULL_LOG_KEY='delta-reign-stream-pull-log-v1';
 let owned={};try{owned=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
 let streams=[];try{streams=JSON.parse(localStorage.getItem(STREAM_KEY))||[]}catch(e){}
 let savedCardData=[];try{savedCardData=JSON.parse(localStorage.getItem(CARD_DATA_KEY))||[]}catch(e){}
+let streamPullLog=[];try{streamPullLog=JSON.parse(localStorage.getItem(PULL_LOG_KEY))||[]}catch(e){}
 const savedById=new Map(savedCardData.map(c=>[c._storageId,c]));
 cards.forEach(c=>{c._storageId=c._storageId||('card-'+c.n);const saved=savedById.get(c._storageId);if(saved)Object.assign(c,saved)});
 savedCardData.filter(c=>String(c._storageId||'').startsWith('manual-')).forEach(saved=>{if(!cards.some(c=>c._storageId===saved._storageId))cards.push(saved)});
+if(!streamPullLog.length){
+ cards.forEach(c=>(c.pulls||[]).forEach(p=>{
+  if(p.streamId) streamPullLog.push({
+   id:p.id||('migrated-'+c.n+'-'+(p.date||'')+'-'+streamPullLog.length),
+   streamId:p.streamId,streamName:p.streamName||'',cardName:c.name,cardNumber:c.n,
+   buyerName:p.buyerName||'',orderNumber:p.orderNumber||'',packer:p.packer||'',
+   date:p.date||'',notes:p.notes||''
+  });
+ }));
+}
 let filtered=cards,offset=0,chosen=null,chosenImage=null;
 const $=id=>document.getElementById(id);
 function persist(){
  localStorage.setItem(KEY,JSON.stringify(owned));
  localStorage.setItem(STREAM_KEY,JSON.stringify(streams));
  localStorage.setItem(CARD_DATA_KEY,JSON.stringify(cards));
+ localStorage.setItem(PULL_LOG_KEY,JSON.stringify(streamPullLog));
 }
 function update(){const count=cards.filter(c=>owned[c.n]).length;$('progress').textContent=count+' / '+cards.length+' collected';$('fill').style.width=(count/Math.max(cards.length,1)*100)+'%'}
 function pocket(c){
@@ -68,7 +81,9 @@ $('logPull').onclick=()=>{
  if(!chosen)return;
  const stream=streams.find(s=>s.id===$('streamSelect').value);
  if(!chosen.pulls)chosen.pulls=[];
- chosen.pulls.push({buyerName:$('buyerName').value.trim(),orderNumber:$('orderNumber').value.trim(),packer:$('packer').value.trim(),streamName:stream?stream.name:'Unassigned stream',streamId:stream?stream.id:'',date:$('pullDate').value,notes:$('pullNotes').value.trim()});
+ const pullRecord={id:'pull-'+Date.now()+'-'+Math.random().toString(36).slice(2,8),buyerName:$('buyerName').value.trim(),orderNumber:$('orderNumber').value.trim(),packer:$('packer').value.trim(),streamName:stream?stream.name:'Unassigned stream',streamId:stream?stream.id:'',date:$('pullDate').value,notes:$('pullNotes').value.trim()};
+ chosen.pulls.push(pullRecord);
+ if(stream) streamPullLog.push({...pullRecord,cardName:chosen.name,cardNumber:chosen.n});
  owned[chosen.n]=true;
  try{persist();showHistory(chosen);render()}catch(e){alert('Could not save this pull record.')}
 };
@@ -85,8 +100,8 @@ $('saveStream').onclick=()=>{
 };
 function renderStreams(){
  $('streamList').innerHTML=streams.length?streams.map(s=>{
-  const pulls=cards.flatMap(c=>(c.pulls||[]).filter(p=>p.streamId===s.id).map(p=>({card:c.name,num:c.n,packer:p.packer})));
-  return `<div class="library-item"><div><b>${s.name}</b><br><small>${s.date||'No date'} · ${pulls.length} logged pulls</small>${s.notes?'<br>'+s.notes:''}<div>${pulls.map(p=>`<small>${p.card} #${p.num} — ${p.packer||'Unknown packer'}</small>`).join('<br>')}</div></div><button class="btn" data-delete-stream="${s.id}">Delete</button></div>`;
+  const pulls=streamPullLog.filter(p=>p.streamId===s.id);
+  return `<div class="library-item"><div><b>${escapeText(s.name)}</b><br><small>${escapeText(s.date||'No date')} · ${pulls.length} logged pulls</small>${s.notes?'<br>'+escapeText(s.notes):''}<div>${pulls.map(p=>`<small>${escapeText(p.cardName||'Card')} #${escapeText(p.cardNumber||'')} · ${escapeText(p.buyerName||'Buyer not entered')} · Order #${escapeText(p.orderNumber||'—')} · ${escapeText(p.packer||'Unknown packer')} · ${escapeText((p.date||'').replace('T',' '))}</small>`).join('<br>')}</div></div><button class="btn" data-delete-stream="${s.id}">Delete</button></div>`;
  }).join(''):'<p>No streams saved yet. Add your first stream above.</p>';
 }
 $('streamList').onclick=e=>{const b=e.target.closest('[data-delete-stream]');if(!b)return;streams=streams.filter(s=>s.id!==b.dataset.deleteStream);persist();renderStreams();refreshStreamSelect()};
