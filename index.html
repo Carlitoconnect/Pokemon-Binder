@@ -1,25 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carlito Connect | Pokémon Binder</title>
-</head>
-<body>
-    <h1>Carlito Connect</h1>
-    <h2>Pokémon Collection Binder</h2>
-
-    <p>Welcome to your collection!</p>
-
-    <button onclick="alert('Stream started!')">
-        Start Stream
-    </button>
-
-    <button onclick="alert('Stream saved!')">
-        End Stream
-    </button>
-
-    <h3>Delta Reign</h3>
-    <p>Your first expansion is coming soon.</p>
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Delta Reign — Rare Card Binder</title><link rel="stylesheet" href="style.css"></head><body><header><div><h1>✦ Delta Reign</h1><small>Rare card collector's binder · 58 cards</small></div><div class="actions"><button class="btn" id="home">Front cover</button><button class="btn" id="refresh">Reload artwork</button></div></header><section class="cover" id="cover"><div><p>Pokémon TCG · Mega Evolution</p><h2>DELTA<br>REIGN</h2><p>Rare collection · 58 cards</p><button class="btn primary" id="open">Open binder →</button></div></section><main class="main hidden" id="main"><div class="stats"><div><strong id="progress">0 / 58 collected</strong><div class="bar"><span id="fill"></span></div></div><div class="filters"><input id="search" placeholder="Search name or number" aria-label="Search cards"><select id="rarity"><option value="">All rarities</option><option>Rare</option><option>Double Rare</option><option>Illustration Rare</option><option>Ultra Rare</option><option>Special Illustration Rare</option><option>Mega Hyper Rare</option></select><button class="btn" id="reset">Clear filters</button><button class="btn primary" id="addManual">＋ Add card</button><button class="btn" id="showLibrary">Stream library & settings</button></div></div><section id="libraryPanel" class="library-panel hidden">
+  <div class="stats"><h3>Stream library</h3><button class="btn" id="closeLibrary">Back to binder</button></div>
+  <div class="editor-grid">
+    <label>Stream name<input id="streamName" placeholder="e.g. Delta Reign rip & ship #1"></label>
+    <label>Stream date<input id="streamDate" type="date"></label>
+    <label class="wide">Notes<input id="streamNotes" placeholder="Optional stream notes"></label>
+  </div>
+  <div class="editor-grid settings-grid">
+    <label>Pack preset<select id="streamPack"></select></label>
+    <label>Pack price (£)<input id="streamPackPrice" type="number" min="0" step="0.01" placeholder="4.00"></label>
+    <label>Default packer name<input id="defaultPacker" placeholder="Optional"></label>
+    <label>Stream status<select id="streamStatus"><option value="planned">Planned</option><option value="live">Live</option><option value="finished">Finished</option></select></label>
+  </div>
+  <p><button class="btn primary" id="saveStream">＋ Save stream</button></p>
+  <section class="saved-packs">
+    <h3>Saved pack presets</h3>
+    <p class="subtle">Your first collection is set to Delta Reign. You can adjust its pack details here.</p>
+    <div class="editor-grid">
+      <label>Pack / expansion name<input id="packName" value="Delta Reign"></label>
+      <label>Default pack price (£)<input id="packPrice" type="number" min="0" step="0.01" placeholder="4.00"></label>
+      <label class="wide">Pack notes<input id="packNotes" placeholder="Optional notes about this product"></label>
+    </div>
+    <p><button class="btn primary" id="savePack">Save Delta Reign pack settings</button></p>
+    <div id="packList" class="library-list"></div>
+  </section>
+  <section class="saved-packs">
+    <h3>Default stream settings</h3>
+    <div class="editor-grid">
+      <label>Default stream title<input id="settingStreamTitle" placeholder="Carlito Connect — Delta Reign"></label>
+      <label>Default packer<input id="settingPacker" placeholder="Optional"></label>
+      <label class="wide">Stream notes / instructions<textarea id="settingStreamNotes" rows="2" placeholder="Anything you want pre-filled for new streams"></textarea></label>
+    </div>
+    <p><button class="btn" id="saveSettings">Save stream settings</button></p>
+    <p class="subtle" id="settingsMessage" aria-live="polite"></p>
+  </section>
+  <div id="streamList" class="library-list"></div>
+</section>
+<div id="loading" class="notice">You can upload your own card scans and log who pulled them during each stream.</div><div class="binder" id="binder"></div><div class="nav"><button class="btn" id="prev">← Previous</button><span id="pages"></span><button class="btn" id="next">Next →</button></div><p class="notice">Tap any card to edit its details or log a pull. Your binder, saved packs and stream settings are stored in this browser. Artwork loads online from the TCGdex card database; if unavailable, card-number placeholders are shown.</p></main><dialog id="dialog">
+  <h3 id="dialogTitle">Card details</h3>
+  <div class="editor-grid">
+    <label>Card name<input id="editName" maxlength="60"></label>
+    <label>Set / expansion<input id="editSet" value="Delta Reign"></label>
+    <label>Card number<input id="editNumber" type="number"></label>
+    <label>Rarity<select id="editRarity"><option>Rare</option><option>Double Rare</option><option>Illustration Rare</option><option>Ultra Rare</option><option>Special Illustration Rare</option><option>Mega Hyper Rare</option><option>Other</option></select></label>
+    <label class="wide">Upload card image<input id="editImage" type="file" accept="image/*"></label>
+    <div class="wide"><img id="cardPreview" alt="Card preview"></div>
+    <label>Packed by<input id="packer" placeholder="Name of person who pulled it"></label>
+    <label>Stream<select id="streamSelect"></select></label>
+    <label>Stream date<input id="pullDate" type="date"></label>
+    <label>Pack / pull notes<input id="pullNotes" placeholder="Optional"></label>
+  </div>
+  <div class="history"><strong>Pull history</strong><div id="pullHistory">No stream history recorded yet.</div></div>
+  <div class="dialog-actions">
+    <button class="btn" id="cancel">Close</button>
+    <button class="btn" id="logPull">Log this pull</button>
+    <button class="btn primary" id="saveCard">Save card</button>
+  </div>
+</dialog><script src="cards.js"></script><script src="app.js"></script></body></html>
