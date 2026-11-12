@@ -108,8 +108,8 @@ $('streamList').onclick=e=>{const b=e.target.closest('[data-delete-stream]');if(
 $('showLibrary').onclick=()=>{$('binder').classList.add('hidden');$('libraryPanel').classList.remove('hidden');$('loading').classList.add('hidden');$('filters')?.classList.add('hidden');renderStreams()};
 $('closeLibrary').onclick=()=>{$('libraryPanel').classList.add('hidden');$('binder').classList.remove('hidden');$('loading').classList.remove('hidden');render()};
 $('search').oninput=filter;$('rarity').onchange=filter;$('reset').onclick=()=>{$('search').value='';$('rarity').value='';filter()};
-$('open').onclick=()=>{$('cover').classList.add('hidden');$('main').classList.remove('hidden');render()};
-$('home').onclick=()=>{$('cover').classList.remove('hidden');$('main').classList.add('hidden')};
+$('open').onclick=()=>{$('cover').classList.add('hidden');$('main').classList.remove('hidden');document.body.classList.remove('cover-mode');render()};
+$('home').onclick=()=>{$('cover').classList.remove('hidden');$('main').classList.add('hidden');document.body.classList.add('cover-mode')};
 $('prev').onclick=()=>{offset=Math.max(0,offset-(innerWidth<=680?9:18));render()};
 $('next').onclick=()=>{offset+=innerWidth<=680?9:18;render()};
 $('cancel').onclick=()=>$('dialog').close();
