@@ -2,11 +2,20 @@
 
 const TOTAL=58, KEY='delta-reign-manual-v3', STREAM_KEY='delta-reign-streams-v1';
 const cards = window.CARDS;
+const CARD_DATA_KEY='delta-reign-card-data-v1';
 let owned={};try{owned=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
 let streams=[];try{streams=JSON.parse(localStorage.getItem(STREAM_KEY))||[]}catch(e){}
+let savedCardData=[];try{savedCardData=JSON.parse(localStorage.getItem(CARD_DATA_KEY))||[]}catch(e){}
+const savedById=new Map(savedCardData.map(c=>[c._storageId,c]));
+cards.forEach(c=>{c._storageId=c._storageId||('card-'+c.n);const saved=savedById.get(c._storageId);if(saved)Object.assign(c,saved)});
+savedCardData.filter(c=>String(c._storageId||'').startsWith('manual-')).forEach(saved=>{if(!cards.some(c=>c._storageId===saved._storageId))cards.push(saved)});
 let filtered=cards,offset=0,chosen=null,chosenImage=null;
 const $=id=>document.getElementById(id);
-function persist(){localStorage.setItem(KEY,JSON.stringify(owned));localStorage.setItem(STREAM_KEY,JSON.stringify(streams))}
+function persist(){
+ localStorage.setItem(KEY,JSON.stringify(owned));
+ localStorage.setItem(STREAM_KEY,JSON.stringify(streams));
+ localStorage.setItem(CARD_DATA_KEY,JSON.stringify(cards));
+}
 function update(){const count=cards.filter(c=>owned[c.n]).length;$('progress').textContent=count+' / '+cards.length+' collected';$('fill').style.width=(count/Math.max(cards.length,1)*100)+'%'}
 function pocket(c){
  if(!c)return '<div class="pocket" style="visibility:hidden"></div>';
@@ -29,7 +38,12 @@ function refreshStreamSelect(){
 }
 function showHistory(c){
  const arr=c.pulls||[];
- $('pullHistory').innerHTML=arr.length?arr.map(x=>`<div class="history-entry"><b>${x.packer||'Packer not entered'}</b> · ${x.streamName||'Unassigned stream'} · ${x.date||''}<br>${x.notes||''}</div>`).join(''):'No stream history recorded yet.';
+ $('pullHistory').innerHTML=arr.length?arr.slice().reverse().map(x=>`<div class="history-entry">
+ <b>${escapeText(x.buyerName||'Buyer not entered')}</b> · Order #${escapeText(x.orderNumber||'—')}<br>
+ <span>${escapeText(x.packer||'Packer not entered')} · ${escapeText(x.streamName||'Unassigned stream')}</span><br>
+ <small>${escapeText((x.date||'').replace('T',' ')||'Date not entered')}</small>
+ ${x.notes?`<br>${escapeText(x.notes)}`:''}
+ </div>`).join(''):'No stream history recorded yet.';
 }
 function openCardEditor(c){
  chosen=c;chosenImage=c.customImage||null;
@@ -37,7 +51,7 @@ function openCardEditor(c){
  $('editName').value=c.name||'';$('editSet').value=c.set||'Delta Reign';$('editNumber').value=c.n;
  $('editRarity').value=c.rarity;$('editImage').value='';
  $('cardPreview').src=chosenImage||c.image||'';$('cardPreview').style.display=(chosenImage||c.image)?'block':'none';
- $('packer').value='';$('pullNotes').value='';$('pullDate').value=new Date().toISOString().slice(0,10);
+ $('packer').value='';$('buyerName').value='';$('orderNumber').value='';$('pullNotes').value='';$('pullDate').value=new Date().toISOString().slice(0,16);
  refreshStreamSelect();showHistory(c);$('dialog').showModal();
 }
 $('editImage').onchange=e=>{
@@ -54,7 +68,7 @@ $('logPull').onclick=()=>{
  if(!chosen)return;
  const stream=streams.find(s=>s.id===$('streamSelect').value);
  if(!chosen.pulls)chosen.pulls=[];
- chosen.pulls.push({packer:$('packer').value.trim(),streamName:stream?stream.name:'Unassigned stream',streamId:stream?stream.id:'',date:$('pullDate').value,notes:$('pullNotes').value.trim()});
+ chosen.pulls.push({buyerName:$('buyerName').value.trim(),orderNumber:$('orderNumber').value.trim(),packer:$('packer').value.trim(),streamName:stream?stream.name:'Unassigned stream',streamId:stream?stream.id:'',date:$('pullDate').value,notes:$('pullNotes').value.trim()});
  owned[chosen.n]=true;
  try{persist();showHistory(chosen);render()}catch(e){alert('Could not save this pull record.')}
 };
@@ -62,7 +76,7 @@ $('binder').onclick=e=>{const b=e.target.closest('[data-num]');if(!b)return;cons
 $('addManual').onclick=()=>{
  const n=Number(prompt('Enter the card number (use a number not already in the binder):'));
  if(!n||cards.some(c=>c.n===n)){alert('Please enter a new, unused card number.');return}
- const c={n,name:'New card',rarity:'Other',set:'Delta Reign',pulls:[]};cards.push(c);filter();openCardEditor(c);
+ const c={n,name:'New card',rarity:'Other',set:'Delta Reign',pulls:[],_storageId:'manual-'+n};cards.push(c);filter();openCardEditor(c);
 };
 $('saveStream').onclick=()=>{
  const name=$('streamName').value.trim();if(!name){alert('Enter a stream name first.');return}

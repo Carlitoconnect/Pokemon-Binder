@@ -44,10 +44,12 @@
     <label>Rarity<select id="editRarity"><option>Rare</option><option>Double Rare</option><option>Illustration Rare</option><option>Ultra Rare</option><option>Special Illustration Rare</option><option>Mega Hyper Rare</option><option>Other</option></select></label>
     <label class="wide">Upload card image<input id="editImage" type="file" accept="image/*"></label>
     <div class="wide"><img id="cardPreview" alt="Card preview"></div>
+    <label>Buyer name<input id="buyerName" placeholder="eBay buyer username"></label>
+    <label>eBay order number<input id="orderNumber" placeholder="e.g. 7"></label>
     <label>Packed by<input id="packer" placeholder="Name of person who pulled it"></label>
     <label>Stream<select id="streamSelect"></select></label>
-    <label>Stream date<input id="pullDate" type="date"></label>
-    <label>Pack / pull notes<input id="pullNotes" placeholder="Optional"></label>
+    <label>Pull date & time<input id="pullDate" type="datetime-local"></label>
+    <label class="wide">Pack / pull notes<input id="pullNotes" placeholder="Optional"></label>
   </div>
   <div class="history"><strong>Pull history</strong><div id="pullHistory">No stream history recorded yet.</div></div>
   <div class="dialog-actions">

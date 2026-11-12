@@ -19,3 +19,10 @@ The binder uses browser `localStorage` for owned cards, card edits, pull history
 
 ## Artwork
 The original card image URLs from the supplied HTML are retained and load over the internet.
+
+## Pull logging
+When logging a card pull, enter the buyer's eBay username and order number, the person who packed it, the stream and the pull date/time. The card's pull history displays those details, newest first.
+
+
+## Important storage fix
+Card details and pull histories are now saved separately in `delta-reign-card-data-v1`, as well as the owned-card and stream records. This prevents pull histories from disappearing when the page reloads. Browser storage is still device/browser-specific.
